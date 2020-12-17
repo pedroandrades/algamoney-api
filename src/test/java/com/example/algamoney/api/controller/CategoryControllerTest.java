@@ -1,8 +1,6 @@
 package com.example.algamoney.api.controller;
 
-import com.example.algamoney.api.model.Address;
 import com.example.algamoney.api.model.Category;
-import com.example.algamoney.api.model.Person;
 import com.example.algamoney.api.repository.CategoryRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;

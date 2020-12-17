@@ -2,15 +2,14 @@ package com.example.algamoney.api.controller;
 
 import com.example.algamoney.api.model.Person;
 import com.example.algamoney.api.repository.PersonRepository;
+import com.example.algamoney.api.util.HeaderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,9 +33,7 @@ public class PersonController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Person> create(@Valid @RequestBody Person person) {
         Person savedPerson = personRepository.save(person);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}")
-                .buildAndExpand(savedPerson.getId()).toUri();
-        return ResponseEntity.created(uri).body(savedPerson);
+        return ResponseEntity.created(HeaderUtil.addLocation(savedPerson.getId())).body(savedPerson);
     }
 
     @GetMapping("/{id}")

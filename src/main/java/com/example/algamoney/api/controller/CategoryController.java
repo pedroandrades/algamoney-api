@@ -2,14 +2,13 @@ package com.example.algamoney.api.controller;
 
 import com.example.algamoney.api.model.Category;
 import com.example.algamoney.api.repository.CategoryRepository;
+import com.example.algamoney.api.util.HeaderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,9 +32,7 @@ public class CategoryController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Category> create(@Valid @RequestBody Category category) {
         Category savedCategory = categoryRepository.save(category);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}")
-                .buildAndExpand(savedCategory.getId()).toUri();
-        return ResponseEntity.created(uri).body(savedCategory);
+        return ResponseEntity.created(HeaderUtil.addLocation(savedCategory.getId())).body(savedCategory);
     }
 
     @GetMapping("/{id}")
