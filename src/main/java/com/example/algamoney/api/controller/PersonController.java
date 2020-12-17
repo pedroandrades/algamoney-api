@@ -1,10 +1,10 @@
 package com.example.algamoney.api.controller;
 
-import com.example.algamoney.api.model.Category;
 import com.example.algamoney.api.model.Person;
 import com.example.algamoney.api.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -30,7 +30,7 @@ public class PersonController {
         return personRepository.findAll();
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Person> create(@Valid @RequestBody Person person) {
         Person savedPerson = personRepository.save(person);

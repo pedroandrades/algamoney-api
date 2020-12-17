@@ -23,6 +23,17 @@ public class Person {
     @Embedded
     private Address address;
 
+    public Person(Long id, @Size(min = 3, max = 50) String name, Boolean active, Address address) {
+        this.id = id;
+        this.name = name;
+        this.active = active;
+        this.address = address;
+    }
+
+    public Person() {
+
+    }
+
     public Long getId() {
         return id;
     }

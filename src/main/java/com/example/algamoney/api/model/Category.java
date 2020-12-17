@@ -17,6 +17,15 @@ public class Category {
     @Size(min = 2, max = 50)
     private String name;
 
+    public Category(Long id, @NotNull @Size(min = 2, max = 50) String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public Category() {
+
+    }
+
     public Long getId() {
         return id;
     }
