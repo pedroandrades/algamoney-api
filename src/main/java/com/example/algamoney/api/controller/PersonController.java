@@ -29,7 +29,7 @@ public class PersonController {
         return personRepository.findAll();
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Person> create(@Valid @RequestBody Person person) {
         Person savedPerson = personRepository.save(person);
@@ -40,5 +40,11 @@ public class PersonController {
     public ResponseEntity<?> findById(@PathVariable Long id){
         Optional<Person> person = personRepository.findById(id);
         return person.isPresent() ? ResponseEntity.ok(person) : ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id){
+        personRepository.deleteById(id);
     }
 }
