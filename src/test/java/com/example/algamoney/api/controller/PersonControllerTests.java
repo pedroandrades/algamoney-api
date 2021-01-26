@@ -30,6 +30,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
@@ -124,6 +125,19 @@ public class PersonControllerTests {
                 .andExpect(jsonPath("name", is(personMockUpdate.getName())))
                 .andExpect(status().isOk());
 
+    }
+
+    @Test
+    public void partialUpdateTest() throws Exception {
+        Person personMockUpdate = personMock;
+        personMockUpdate.setName("updateTest");
+
+        given(personService.partialUpdate(anyLong(), any())).willReturn(personMockUpdate);
+
+        mvc.perform(patch(url + 1L).content(mapper.writeValueAsString(personMockUpdate))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("name", is(personMockUpdate.getName())))
+                .andExpect(status().isOk());
     }
 
 }

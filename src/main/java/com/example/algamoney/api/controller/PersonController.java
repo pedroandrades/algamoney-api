@@ -55,4 +55,9 @@ public class PersonController {
     public ResponseEntity<Person> update(@PathVariable Long id, @Valid @RequestBody Person person){
         return ResponseEntity.ok(personService.update(id, person));
     }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Person> partialUpdate(@Valid @PathVariable Long id, @RequestBody Person person) {
+        return ResponseEntity.ok(personService.partialUpdate(id, person));
+    }
 }

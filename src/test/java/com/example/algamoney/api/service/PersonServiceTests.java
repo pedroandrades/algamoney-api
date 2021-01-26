@@ -39,4 +39,14 @@ public class PersonServiceTests {
         given(personRepository.save(any())).willReturn(updatePersonMock);
         assertEquals(updatePersonMock, personService.update(1L, updatePersonMock));
     }
+
+    @Test
+    public void partialUpdateTest(){
+        Person personMock = new Person(1L, "person1", true, new Address());
+        Person updatePersonMock = new Person(1L, "update", true, new Address());
+
+        given(personRepository.findById(anyLong())).willReturn(Optional.of(personMock));
+        given(personRepository.save(any())).willReturn(updatePersonMock);
+        assertEquals(updatePersonMock, personService.partialUpdate(1L, updatePersonMock));
+    }
 }

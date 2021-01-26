@@ -92,7 +92,6 @@ public class CategoryControllerTest {
 
     @Test
     public void findByNonExistentIdTest() throws Exception {
-
         given(categoryRepository.findById(anyLong())).willReturn(Optional.empty());
 
         mvc.perform(get(url + 1L)
