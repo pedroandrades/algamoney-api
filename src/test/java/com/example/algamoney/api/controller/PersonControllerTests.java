@@ -3,6 +3,7 @@ package com.example.algamoney.api.controller;
 import com.example.algamoney.api.model.Address;
 import com.example.algamoney.api.model.Person;
 import com.example.algamoney.api.repository.PersonRepository;
+import com.example.algamoney.api.service.PersonService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,6 +28,8 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
@@ -40,12 +43,18 @@ public class PersonControllerTests {
     @MockBean
     private PersonRepository personRepository;
 
+    @MockBean
+    private PersonService personService;
+
     private final String url = "/persons/";
 
     private ObjectMapper mapper;
 
+    private Person personMock;
+
     @Before
     public void setUp() {
+        personMock = new Person(1L, "person1", true, new Address());
         this.mapper = new ObjectMapper();
     }
 
@@ -66,8 +75,6 @@ public class PersonControllerTests {
 
     @Test
     public void createTest() throws Exception {
-        Person personMock = new Person(1L, "person1", true, new Address());
-
         given(personRepository.save(any())).willReturn(personMock);
 
         mvc.perform(post(url).content(mapper.writeValueAsString(personMock))
@@ -79,7 +86,6 @@ public class PersonControllerTests {
 
     @Test
     public void findByIdTest() throws Exception {
-        Person personMock = new Person(1L, "person1", true, new Address());
         Optional<Person> personMockOptional = Optional.of(personMock);
 
         given(personRepository.findById(personMock.getId())).willReturn(personMockOptional);
@@ -92,12 +98,32 @@ public class PersonControllerTests {
 
     @Test
     public void findByNonExistentIdTest() throws Exception {
-
         given(personRepository.findById(anyLong())).willReturn(Optional.empty());
 
         mvc.perform(get(url + 1L)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void deleteTest() throws Exception {
+        mvc.perform(delete(url + 1L)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void updateTest() throws Exception {
+        Person personMockUpdate = personMock;
+        personMockUpdate.setName("updateTest");
+
+        given(personService.update(anyLong(), any())).willReturn(personMockUpdate);
+
+        mvc.perform(put(url + 1L).content(mapper.writeValueAsString(personMockUpdate))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("name", is(personMockUpdate.getName())))
+                .andExpect(status().isOk());
+
     }
 
 }
