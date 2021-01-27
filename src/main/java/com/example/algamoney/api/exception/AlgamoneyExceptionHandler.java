@@ -3,6 +3,7 @@ package com.example.algamoney.api.exception;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -31,7 +32,7 @@ public class AlgamoneyExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String userMessage = messageSource.getMessage("invalid.message", null, LocaleContextHolder.getLocale());
-        String devMessage = ex.getCause() != null ? ex.getCause().toString() : ex.toString();
+        String devMessage = ex.getMostSpecificCause().toString();
         List<Error> errors = Collections.singletonList(new Error(userMessage, devMessage));
         return handleExceptionInternal(ex, errors, headers, status, request);
     }
@@ -45,9 +46,17 @@ public class AlgamoneyExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(EmptyResultDataAccessException.class)
     public ResponseEntity<Object> handleEmptyResultDataAccessException(EmptyResultDataAccessException ex, WebRequest request){
         String userMessage = messageSource.getMessage("resource.not.found.message", null, LocaleContextHolder.getLocale());
-        String devMessage = ex.toString();
+        String devMessage = ex.getMostSpecificCause().toString();
         List<Error> errors = Collections.singletonList(new Error(userMessage, devMessage));
         return handleExceptionInternal(ex, errors, HttpHeaders.EMPTY, HttpStatus.NOT_FOUND, request);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request){
+        String userMessage = messageSource.getMessage("resource.operation.not.allowed.message", null, LocaleContextHolder.getLocale());
+        String devMessage = ex.getMostSpecificCause().toString();
+        List<Error> errors = Collections.singletonList(new Error(userMessage, devMessage));
+        return handleExceptionInternal(ex, errors, HttpHeaders.EMPTY, HttpStatus.BAD_REQUEST, request);
     }
 
     private List<Error> createErrorList(BindingResult bindingResult){
