@@ -21,15 +21,23 @@ public class PersonService {
     }
 
     public Person update(Long id, Person person) {
-        Person savedPerson = personRepository.findById(id).orElseThrow(() -> new EmptyResultDataAccessException(1));
+        Person savedPerson = findById(id);
         BeanUtils.copyProperties(person, savedPerson, "id");
+        return save(savedPerson);
+    }
+
+    private Person findById(Long id) {
+        return personRepository.findById(id).orElseThrow(() -> new EmptyResultDataAccessException(1));
+    }
+
+    private Person save(Person savedPerson) {
         return personRepository.save(savedPerson);
     }
 
     public Person partialUpdate(Long id, Person person) {
-        Person savedPerson = personRepository.findById(id).orElseThrow(() -> new EmptyResultDataAccessException(1));
+        Person savedPerson = findById(id);
         BeanUtils.copyProperties(fieldComplete(person, savedPerson), savedPerson, "id");
-        return personRepository.save(savedPerson);
+        return save(savedPerson);
     }
 
     public Person fieldComplete(Person person, Person savedPerson){
