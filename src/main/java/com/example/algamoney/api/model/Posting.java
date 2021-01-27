@@ -1,5 +1,7 @@
 package com.example.algamoney.api.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -15,9 +17,11 @@ public class Posting {
     private String description;
 
     @Column(name = "due_date")
+    @JsonFormat(pattern =  "dd/MM/yyyy")
     private LocalDate dueDate;
 
-    private LocalDate payDay;
+    @JsonFormat(pattern =  "dd/MM/yyyy")
+    private LocalDate payday;
 
     private BigDecimal value;
 
@@ -58,14 +62,6 @@ public class Posting {
         this.dueDate = dueDate;
     }
 
-    public LocalDate getPayDay() {
-        return payDay;
-    }
-
-    public void setPayDay(LocalDate payDay) {
-        this.payDay = payDay;
-    }
-
     public BigDecimal getValue() {
         return value;
     }
@@ -104,5 +100,13 @@ public class Posting {
 
     public void setPerson(Person person) {
         this.person = person;
+    }
+
+    public LocalDate getPayday() {
+        return payday;
+    }
+
+    public void setPayday(LocalDate payday) {
+        this.payday = payday;
     }
 }
