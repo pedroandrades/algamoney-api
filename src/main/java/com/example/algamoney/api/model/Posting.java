@@ -3,6 +3,7 @@ package com.example.algamoney.api.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -14,8 +15,10 @@ public class Posting {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     private String description;
 
+    @NotNull
     @Column(name = "due_date")
     @JsonFormat(pattern =  "dd/MM/yyyy")
     private LocalDate dueDate;
@@ -23,17 +26,21 @@ public class Posting {
     @JsonFormat(pattern =  "dd/MM/yyyy")
     private LocalDate payday;
 
+    @NotNull
     private BigDecimal value;
 
     private String observation;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     private TypePosting type;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "person_id")
     private Person person;
