@@ -3,6 +3,7 @@ package com.example.algamoney.api.controller;
 import com.example.algamoney.api.exception.AlgamoneyExceptionHandler;
 import com.example.algamoney.api.model.Posting;
 import com.example.algamoney.api.repository.PostingRepository;
+import com.example.algamoney.api.repository.filter.PostingFilter;
 import com.example.algamoney.api.service.PostingService;
 import com.example.algamoney.api.service.exception.InactivePersonException;
 import com.example.algamoney.api.util.HeaderUtil;
@@ -36,8 +37,8 @@ public class PostingController {
     }
 
     @GetMapping
-    public List<Posting> findAll(){
-        return postingRepository.findAll();
+    public List<Posting> findAll(PostingFilter postingFilter){
+        return postingRepository.filter(postingFilter);
     }
 
     @GetMapping("/{id}")
