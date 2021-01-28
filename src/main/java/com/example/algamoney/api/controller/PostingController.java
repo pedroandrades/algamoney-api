@@ -54,6 +54,12 @@ public class PostingController {
         return ResponseEntity.created(HeaderUtil.addLocation(savedPosting.getId())).body(savedPosting);
     }
 
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id){
+        postingRepository.deleteById(id);
+    }
+
     @ExceptionHandler({InactivePersonException.class})
     public ResponseEntity<Object> handleInactivePersonException(InactivePersonException ex){
         String userMessage = messageSource.getMessage("inactive.person.message", null, LocaleContextHolder.getLocale());
