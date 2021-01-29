@@ -10,6 +10,8 @@ import com.example.algamoney.api.util.HeaderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,8 +39,8 @@ public class PostingController {
     }
 
     @GetMapping
-    public List<Posting> findAll(PostingFilter postingFilter){
-        return postingRepository.filter(postingFilter);
+    public Page<Posting> findAll(PostingFilter postingFilter, Pageable pageable){
+        return postingRepository.filter(postingFilter, pageable);
     }
 
     @GetMapping("/{id}")

@@ -3,6 +3,9 @@ package com.example.algamoney.api.repository.posting;
 import com.example.algamoney.api.model.Posting;
 import com.example.algamoney.api.model.Posting_;
 import com.example.algamoney.api.repository.filter.PostingFilter;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.util.ObjectUtils;
 
 import javax.persistence.EntityManager;
@@ -21,16 +24,15 @@ public class PostingRepositoryImpl implements PostingRepositoryQuery{
     private EntityManager manager;
 
     @Override
-    public List<Posting> filter(PostingFilter postingFilter) {
+    public Page<Posting> filter(PostingFilter postingFilter, Pageable pageable) {
         CriteriaBuilder builder = manager.getCriteriaBuilder();
         CriteriaQuery<Posting> criteria = builder.createQuery(Posting.class);
         Root<Posting> root = criteria.from(Posting.class);
-
         Predicate[] predicates = createRestriction(postingFilter, builder, root);
         criteria.where(predicates);
-
         TypedQuery<Posting> query = manager.createQuery(criteria);
-        return query.getResultList();
+        addPageableRestrictions(query, pageable);
+        return new PageImpl<>(query.getResultList(), pageable, total(postingFilter));
     }
 
     private Predicate[] createRestriction(PostingFilter postingFilter, CriteriaBuilder builder, Root<Posting> root) {
@@ -52,5 +54,26 @@ public class PostingRepositoryImpl implements PostingRepositoryQuery{
         }
 
         return predicates.toArray(new Predicate[0]);
+    }
+
+    private void addPageableRestrictions(TypedQuery<Posting> query, Pageable pageable) {
+        int actualPage = pageable.getPageNumber();
+        int totalRegistersByPage = pageable.getPageSize();
+        int firstRegister = actualPage * totalRegistersByPage;
+
+        query.setFirstResult(firstRegister);
+        query.setMaxResults(totalRegistersByPage);
+    }
+
+    private Long total(PostingFilter postingFilter) {
+        CriteriaBuilder builder = manager.getCriteriaBuilder();
+        CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+        Root<Posting> root = criteria.from(Posting.class);
+
+        Predicate[] predicates = createRestriction(postingFilter, builder, root);
+        criteria.where(predicates);
+
+        criteria.select(builder.count(root));
+        return manager.createQuery(criteria).getSingleResult();
     }
 }
