@@ -18,16 +18,19 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     private final AuthenticationManager authenticationManager;
 
+    private final AppUserDetailsService appUserDetailsService;
+
     @Autowired
-    public AuthorizationServerConfig(AuthenticationManager authenticationManager) {
+    public AuthorizationServerConfig(AuthenticationManager authenticationManager, AppUserDetailsService appUserDetailsService) {
         this.authenticationManager = authenticationManager;
+        this.appUserDetailsService = appUserDetailsService;
     }
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()
                 .withClient("angular")
-                .secret("angular")
+                .secret("$2a$10$G1j5Rf8aEEiGc/AET9BA..xRR.qCpOUzBZoJd8ygbGy6tb3jsMT9G")
                 .scopes("read", "write")
                 .authorizedGrantTypes("password", "refresh_token")
                 .accessTokenValiditySeconds(1800)
@@ -40,6 +43,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 .tokenStore(tokenStore())
                 .accessTokenConverter(accessTokenConverter())
                 .reuseRefreshTokens(false)
+                .userDetailsService(appUserDetailsService)
                 .authenticationManager(authenticationManager);
     }
 
